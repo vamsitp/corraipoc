@@ -39,7 +39,7 @@
             var sbClient = new QueueClient(connectionString, "inputq");
             var sbMessage = new Message(Encoding.UTF8.GetBytes(body)) { SessionId = body };
             await sbClient.SendAsync(sbMessage);
-            this.logger.LogInformation($"sbMessage.Diagnostic-Id = {sbMessage.UserProperties["Diagnostic-Id"]} / currActivity.TraceId = {Activity.Current?.TraceId.ToString() ?? string.Empty}");
+            this.logger.LogInformation($"{body} - sbMessage.Diagnostic-Id = {sbMessage.UserProperties["Diagnostic-Id"]} / currActivity.TraceId = {Activity.Current?.TraceId.ToString() ?? string.Empty}");
 
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

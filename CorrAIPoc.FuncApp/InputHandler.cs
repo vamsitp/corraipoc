@@ -12,13 +12,14 @@ namespace CorrAIPoc.FuncApp
     public class InputHandler
     {
         [FunctionName("InputHandler")]
-        public void Run([ServiceBusTrigger("inputq", Connection = "SBConn", IsSessionsEnabled = true)]Message message, ExecutionContext context, ILogger logger)
+        public async Task Run([ServiceBusTrigger("inputq", Connection = "SBConn", IsSessionsEnabled = true)]Message message, ExecutionContext context, ILogger logger)
         {
             var currActivity = Activity.Current;
             var msgActivity = message.ExtractActivity();
             var body = Encoding.UTF8.GetString(message.Body);
 
-            logger.LogInformation($" - {body} (currActivity.TraceId={currActivity?.TraceId.ToString() ?? string.Empty} / msgActivity.Id={msgActivity?.Id ?? string.Empty} / msg.CorrelationId={message.CorrelationId ?? string.Empty} / msg.props.diag-id={message.UserProperties["Diagnostic-Id"]} / context.InvocationId={context.InvocationId.ToString() ?? string.Empty})");
+            logger.LogInformation($"InputHandler.Run() - {body} (currActivity.TraceId={currActivity?.TraceId.ToString() ?? string.Empty} / msgActivity.Id={msgActivity?.Id ?? string.Empty} / msg.CorrelationId={message.CorrelationId ?? string.Empty} / msg.props.diag-id={message.UserProperties["Diagnostic-Id"]} / context.InvocationId={context.InvocationId.ToString() ?? string.Empty})");
+            await Task.CompletedTask;
         }
     }
 }
