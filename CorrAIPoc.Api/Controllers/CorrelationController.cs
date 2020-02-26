@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -16,11 +15,6 @@
     [Route("api")]
     public class CorrelationController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<CorrelationController> logger;
         private readonly IConfiguration configuration;
 
@@ -31,34 +25,35 @@
         }
 
         [HttpGet]
-        public async Task<IEnumerable<WeatherForecast>> Get()
+        public async Task<IEnumerable<CorrelationInfo>> Get()
         {
             return await Process(DateTime.Now.Ticks.ToString());
         }
 
         [HttpGet("{message}")]
-        public async Task<IEnumerable<WeatherForecast>> Get([FromRoute]string message)
+        public async Task<IEnumerable<CorrelationInfo>> Get([FromRoute]string message)
         {
             return await Process(message);
         }
 
-        private async Task<IEnumerable<WeatherForecast>> Process(string message)
+        private async Task<IEnumerable<CorrelationInfo>> Process(string message)
         {
             this.logger.LogInformation(message);
             var connectionString = configuration.GetValue<string>("SBConn");
             var sbClient = new QueueClient(connectionString, "inputq");
             var sbMessage = new Message(Encoding.UTF8.GetBytes(message)) { SessionId = message };
             await sbClient.SendAsync(sbMessage);
-            this.logger.LogInformation($"{message} - sbMessage.Diagnostic-Id = {sbMessage.UserProperties["Diagnostic-Id"]} / currActivity.TraceId = {Activity.Current?.TraceId.ToString() ?? string.Empty}");
+            this.logger.LogInformation($"{message} Sent - sbMessage.Diagnostic-Id = {sbMessage.UserProperties["Diagnostic-Id"]} / currActivity.TraceId = {Activity.Current?.TraceId.ToString() ?? string.Empty}");
 
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return new[] { new CorrelationInfo
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                Date = DateTime.Now,
+                MessageBody = message,
+                TraceId = Activity.Current?.TraceId.ToString(),
+                MessageId = sbMessage.MessageId,
+                DiagnosticId = sbMessage.UserProperties["Diagnostic-Id"].ToString(),
+                CorrelationId = sbMessage.CorrelationId
+            }};
         }
     }
 }
