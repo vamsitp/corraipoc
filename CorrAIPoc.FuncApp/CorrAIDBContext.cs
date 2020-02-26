@@ -1,11 +1,10 @@
 ﻿namespace CorrAI.Core
 {
     //using Microsoft.EntityFrameworkCore;
-    //using Microsoft.Extensions.Configuration;
-    //using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
 
-    public partial class CorrAIDBContext
-        //: DbContext
+    public partial class CorrAIDBContext// : DbContext
     {
         //public static readonly ILoggerFactory EFLoggerFactory = LoggerFactory.Create(builder =>
         //{
@@ -14,24 +13,24 @@
         //    //.AddApplicationInsights(Utils.AppInsightsKey);
         //});
 
-        //public CorrAIDBContext()
-        //{
-        //    /*
-        //        CREATE TABLE [dbo].[WeatherForecast] (
-        //            [ID]            INT             IDENTITY (1, 1) NOT NULL,
-        //            [Summary]       NVARCHAR (MAX)  NOT NULL,
-        //            [TemperatureC]  INT             NOT NULL,
-        //            [TemperatureF]  INT             NULL,
-        //            [Date]          DATETIME        NOT NULL,
-        //            [TraceId]       NVARCHAR(MAX)       NULL
-        //        );
-        //     */
-        //}
+        public CorrAIDBContext()
+        {
+            /*
+                CREATE TABLE [dbo].[WeatherForecast] (
+                    [ID]            INT             IDENTITY (1, 1) NOT NULL,
+                    [Summary]       NVARCHAR (MAX)  NOT NULL,
+                    [TemperatureC]  INT             NOT NULL,
+                    [TemperatureF]  INT             NULL,
+                    [Date]          DATETIME        NOT NULL,
+                    [TraceId]       NVARCHAR(MAX)       NULL
+                );
+             */
+        }
 
-        //public CorrAIDBContext(IConfiguration configuration)
-        //{
-        //    this.Configuration = configuration;
-        //}
+        public CorrAIDBContext(IConfiguration configuration)
+        {
+            this.Configuration = configuration;
+        }
 
         //public CorrAIDBContext(DbContextOptions<CorrAIDBContext> options, IConfiguration configuration)
         //    : base(options)
@@ -39,7 +38,7 @@
         //    this.Configuration = configuration;
         //}
 
-        //public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         //public virtual DbSet<dynamic> WeatherForecast { get; set; }
 
